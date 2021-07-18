@@ -10,28 +10,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet(name = "MvcMemberSaveServlet", urlPatterns = "/servlet-mvc/members/save")
-public class MvcMemberSaveServlet extends HelloServlet {
+@WebServlet(name = "mvcMemberListServlet", urlPatterns = "/servlet-mvc/members")
+public class MvcMemberListServlet extends HelloServlet {
 
     private MemberRepository memberRepository = MemberRepository.getInstance();
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Member> members = memberRepository.findAll();
 
-        String username = request.getParameter("username");
-        int age = Integer.parseInt(request.getParameter("age"));
+        request.setAttribute("members",members);
 
-        Member member = new Member(username,age);
-        memberRepository.save(member);
-
-        //Model에 데이터를 보관
-        request.setAttribute("member",member);
-
-        String viewPath = "/WEB-INF/views/save-result.jsp";
-
-        RequestDispatcher dispatcher =  request.getRequestDispatcher(viewPath);
+        String viewPath = "/WEB-INF/views/members.jsp";
+        RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
         dispatcher.forward(request, response);
-
     }
 }
